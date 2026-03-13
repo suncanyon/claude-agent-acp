@@ -2,6 +2,53 @@
 
 [![npm](https://img.shields.io/npm/v/%40zed-industries%2Fclaude-agent-acp)](https://www.npmjs.com/package/@zed-industries/claude-agent-acp)
 
+## Server Mode (Suncanyon Fork)
+
+This fork adds a `--server` flag that runs `claude-agent-acp` as a WebSocket server,
+allowing remote ACP clients (like OpenClaw's acpx plugin) to connect over the network
+instead of spawning the process locally.
+
+### Quick start
+
+```bash
+npm install
+cp .env.example .env  # fill in AUTH_TOKEN and ANTHROPIC_API_KEY
+npm run build
+node dist/index.js --server
+# Listening on ws://0.0.0.0:18790
+```
+
+### Docker
+
+```bash
+docker compose up -d
+```
+
+### Connecting from acpx (jen-brain)
+
+In `~/.acpx/config.json` on the jen-brain host:
+```json
+{
+  "agents": {
+    "claude": {
+      "url": "ws://coding-agent-host:18790",
+      "token": "your-AUTH_TOKEN"
+    }
+  }
+}
+```
+
+### Architecture
+
+```
+  jen-brain (acpx)  ──── ws://host:18790 ────▶  claude-agent-acp --server
+                                                        │ (per connection)
+                                               spawns: claude-agent-acp (stdio)
+                                               bridges: WebSocket ↔ stdin/stdout
+```
+
+---
+
 Use [Claude Agent SDK](https://platform.claude.com/docs/en/agent-sdk/overview#branding-guidelines) from [ACP-compatible](https://agentclientprotocol.com) clients such as [Zed](https://zed.dev)!
 
 This tool implements an ACP agent by using the official [Claude Agent SDK](https://platform.claude.com/docs/en/agent-sdk/overview), supporting:

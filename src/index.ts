@@ -4,7 +4,12 @@
 import { loadManagedSettings, applyEnvironmentSettings } from "./utils.js";
 import { claudeCliPath, runAcp } from "./acp-agent.js";
 
-if (process.argv.includes("--cli")) {
+if (process.argv.includes("--server")) {
+  // Server mode: WebSocket bridge that spawns stdio agents per connection
+  const { startServer } = await import("./server.js");
+  const { loadServerConfig } = await import("./server-config.js");
+  startServer(loadServerConfig());
+} else if (process.argv.includes("--cli")) {
   process.argv = process.argv.filter((arg) => arg !== "--cli");
   await import(await claudeCliPath());
 } else {
