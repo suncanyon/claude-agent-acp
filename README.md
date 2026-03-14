@@ -38,6 +38,17 @@ In `~/.acpx/config.json` on the jen-brain host:
 }
 ```
 
+## Authentication
+
+The server validates incoming connections using a Bearer token configured via `AUTH_TOKEN` in `.env`.
+
+When connecting from vscode-acp (or any ACP client), configure the matching token as the **API key** in the agent settings:
+
+- In VS Code: use **ACP: Add Remote Agent** and enter the token when prompted for the API key.
+- In `settings.json` directly: set `"token": "your-AUTH_TOKEN-value"` on the agent config entry.
+
+The token is sent as an `Authorization: Bearer <token>` HTTP header during the WebSocket upgrade handshake.
+
 ### Architecture
 
 ```
